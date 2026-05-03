@@ -13,6 +13,7 @@ function GameBoard() {
 
   const [board, setBoard] = useState(defaultBoard);
   const [guessesCount, setGuessesCount] = useState(0);
+  const [message, setMessage] = useState("");
 
   const handleAdd = (letter) => {
     setBoard(prev => prev.map((row, rowIndex) => {
@@ -45,11 +46,44 @@ function GameBoard() {
     return result;
   }
 
-  console.log(board);
+  const handleSubmit = () => {
+    let guess = "";
+    for (const slot of board[guessesCount]) {
+      guess += slot?.letter || "";
+    }
+
+    if (guess.length === WORD_LENGTH) {
+      checkGuess(guess);
+    }
+    else {
+      setMessage("Not enough letters");
+    }
+  }
+
+  const checkGuess = async (guess) => {
+    try {
+      const response = await fetch("http://localhost:3000/words/check", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ guess }),
+        credentials: "include"
+      })
+
+      if (!response.ok) {
+        setMessage(response.status + response.statusText);
+        return;
+      }
+      const result = await response.json();
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <div>
-      <KeyBoard handleAdd={handleAdd} handleDelete={handleDelete} />
+      {message}
+      <KeyBoard handleAdd={handleAdd} handleDelete={handleDelete} handleSubmit={handleSubmit} />
     </div>
   )
 }
