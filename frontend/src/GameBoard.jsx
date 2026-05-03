@@ -81,8 +81,22 @@ function GameBoard() {
   }
 
   return (
-    <div>
-      {message}
+    <div className='w-fit mx-auto mt-10'>
+      <div className='space-y-2'>
+        {board.map((row, rowIndex) => {
+          return <div key={rowIndex} className='flex justify-center space-x-2'>
+            {row.map((col, colIndex) =>
+              <div
+                key={colIndex}
+                className='size-15 text-4xl font-semibold text-center pt-1.5 border-1'
+              >
+                {col?.letter || ""}
+              </div>)
+            }
+          </div>
+        })}
+      </div>
+
       <KeyBoard handleAdd={handleAdd} handleDelete={handleDelete} handleSubmit={handleSubmit} />
     </div>
   )
