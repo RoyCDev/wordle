@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react';
 import KeyBoard from './KeyBoard';
+import Cookies from "js-cookie"
 
 function GameBoard() {
   const MAX_GUESSES = 6;
@@ -14,6 +15,19 @@ function GameBoard() {
   const [board, setBoard] = useState(defaultBoard);
   const [guessesCount, setGuessesCount] = useState(0);
   const [message, setMessage] = useState("");
+  const [isGameOver, setIsGameOver] = useState(false);
+
+  console.log("The word is " + Cookies.get("word"))
+
+  useEffect(() => {
+    if (guessesCount !== 0) { // check only if we've made a guess
+      const isLastGuessCorrect = board[guessesCount - 1].every(slot => slot?.color === "bg-green-400");
+      if (guessesCount === MAX_GUESSES || isLastGuessCorrect) {
+        setIsGameOver(true);
+        setMessage("The word is " + Cookies.get("word"))
+      }
+    }
+  }, [guessesCount])
 
   const handleAdd = (letter) => {
     setBoard(prev => prev.map((row, rowIndex) => {
@@ -97,8 +111,6 @@ function GameBoard() {
     return updatedArray;
   }
 
-  console.log(board);
-
   return (
     <div className='w-fit mx-auto mt-10'>
       <div className='space-y-2'>
@@ -107,7 +119,7 @@ function GameBoard() {
             {row.map((col, colIndex) =>
               <div
                 key={colIndex}
-                className={`size-15 text-4xl font-semibold text-center pt-2 border-1 ${col?.color ?? ""}`}
+                className={`size-15 text-4xl font-semibold text-center pt-2 border ${col?.color ?? ""}`}
               >
                 {col?.letter || ""}
               </div>)
@@ -116,7 +128,10 @@ function GameBoard() {
         })}
       </div>
 
-      <KeyBoard handleAdd={handleAdd} handleDelete={handleDelete} handleSubmit={handleSubmit} />
+      {isGameOver ?
+        <div>{message}</div> :
+        <KeyBoard handleAdd={handleAdd} handleDelete={handleDelete} handleSubmit={handleSubmit} />
+      }
     </div>
   )
 }

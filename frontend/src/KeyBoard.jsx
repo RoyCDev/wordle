@@ -8,7 +8,7 @@ function KeyBoard({ handleAdd, handleDelete, handleSubmit }) {
       {KEYS.map(key =>
         <button
           key={key}
-          className='border-1 w-8 h-10'
+          className='border w-8 h-10'
           onClick={
             key === "DELETE" ? handleDelete :
               key === "ENTER" ? handleSubmit :
