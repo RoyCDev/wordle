@@ -19,7 +19,7 @@ function GameBoard() {
 
   useEffect(() => {
     if (guessesCount !== 0) { // check only if we've made a guess
-      const isLastGuessCorrect = board[guessesCount - 1].every(slot => slot?.color === "bg-green-400");
+      const isLastGuessCorrect = board[guessesCount - 1].every(slot => slot?.color === "bg-green-600");
       if (guessesCount === MAX_GUESSES || isLastGuessCorrect) {
         setIsGameOver(true);
         toast.info(isLastGuessCorrect ? "You guessed it!" : "The word is " + Cookies.get("word"));
@@ -102,9 +102,9 @@ function GameBoard() {
     const updatedArray = [...array];
     for (let i = 0; i < array.length; i++) {
       updatedArray[i].color =
-        result[i] === "green" ? "bg-green-400" :
-          result[i] === "yellow" ? "bg-yellow-300" :
-            "bg-gray-400"
+        result[i] === "green" ? "bg-green-600" :
+          result[i] === "yellow" ? "bg-yellow-500" :
+            "bg-gray-500"
     }
     return updatedArray;
   }
@@ -117,8 +117,7 @@ function GameBoard() {
             {row.map((col, colIndex) =>
               <div
                 key={colIndex}
-                className={`size-15 text-4xl font-semibold text-center pt-2 border ${col?.color ?? ""}`}
-              >
+                className={`size-15 text-4xl font-semibold text-center pt-2 ${col?.color ? col.color + " text-white" : "border border-gray-300"}`}>
                 {col?.letter || ""}
               </div>)
             }

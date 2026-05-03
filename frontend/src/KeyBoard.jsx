@@ -4,11 +4,11 @@ function KeyBoard({ handleAdd, handleDelete, handleSubmit }) {
   const KEYS = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "ENTER", "Z", "X", "C", "V", "B", "N", "M", "DELETE"];
 
   return (
-    <div className='flex flex-wrap max-w-90 justify-center gap-1 mt-5'>
+    <div className='flex flex-wrap max-w-108 justify-center gap-2 mt-10'>
       {KEYS.map(key =>
         <button
           key={key}
-          className='border w-8 h-10'
+          className='rounded min-w-8 h-10 px-2 pb-0.5 bg-gray-300 font-bold hover:bg-gray-700 hover:text-white hover:cursor-pointer'
           onClick={
             key === "DELETE" ? handleDelete :
               key === "ENTER" ? handleSubmit :
