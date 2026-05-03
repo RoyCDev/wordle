@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { ToastContainer } from "react-toastify"
 import GameBoard from "./GameBoard.jsx"
 
 function App() {
@@ -17,7 +18,10 @@ function App() {
   }, [])
 
   return (
-    <GameBoard />
+    <>
+      <ToastContainer />
+      <GameBoard />
+    </>
   )
 }
 

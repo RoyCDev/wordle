@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useState } from 'react';
 import KeyBoard from './KeyBoard';
 import Cookies from "js-cookie"
+import { toast } from 'react-toastify';
 
 function GameBoard() {
   const MAX_GUESSES = 6;
@@ -14,17 +15,14 @@ function GameBoard() {
 
   const [board, setBoard] = useState(defaultBoard);
   const [guessesCount, setGuessesCount] = useState(0);
-  const [message, setMessage] = useState("");
   const [isGameOver, setIsGameOver] = useState(false);
-
-  console.log("The word is " + Cookies.get("word"))
 
   useEffect(() => {
     if (guessesCount !== 0) { // check only if we've made a guess
       const isLastGuessCorrect = board[guessesCount - 1].every(slot => slot?.color === "bg-green-400");
       if (guessesCount === MAX_GUESSES || isLastGuessCorrect) {
         setIsGameOver(true);
-        setMessage("The word is " + Cookies.get("word"))
+        toast.info(isLastGuessCorrect ? "You guessed it!" : "The word is " + Cookies.get("word"));
       }
     }
   }, [guessesCount])
@@ -76,7 +74,7 @@ function GameBoard() {
       }
     }
     else {
-      setMessage("Not enough letters");
+      toast.error("Not enough letters");
     }
   }
 
@@ -90,7 +88,7 @@ function GameBoard() {
       })
 
       if (!response.ok) {
-        setMessage(response.status + response.statusText);
+        toast.error(response.status + response.statusText);
         return;
       }
       return await response.json();
@@ -128,8 +126,7 @@ function GameBoard() {
         })}
       </div>
 
-      {isGameOver ?
-        <div>{message}</div> :
+      {!isGameOver &&
         <KeyBoard handleAdd={handleAdd} handleDelete={handleDelete} handleSubmit={handleSubmit} />
       }
     </div>
