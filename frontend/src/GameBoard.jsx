@@ -46,14 +46,20 @@ function GameBoard() {
     return result;
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     let guess = "";
     for (const slot of board[guessesCount]) {
       guess += slot?.letter || "";
     }
 
     if (guess.length === WORD_LENGTH) {
-      checkGuess(guess);
+      const result = await checkGuess(guess);
+      if (result) {
+        setBoard(prev => prev.map((row, rowIndex) => {
+          return rowIndex === guessesCount ? updateRowTilesColor(row, result.colors) : row
+        }))
+        setGuessesCount(prev => prev + 1);
+      }
     }
     else {
       setMessage("Not enough letters");
@@ -65,7 +71,7 @@ function GameBoard() {
       const response = await fetch("http://localhost:3000/words/check", {
         method: "POST",
         headers: { "Content-type": "application/json" },
-        body: JSON.stringify({ guess }),
+        body: JSON.stringify({ guess: guess.toLowerCase() }),
         credentials: "include"
       })
 
@@ -73,12 +79,25 @@ function GameBoard() {
         setMessage(response.status + response.statusText);
         return;
       }
-      const result = await response.json();
+      return await response.json();
     }
     catch (error) {
       console.log(error)
     }
   }
+
+  const updateRowTilesColor = (array, result) => {
+    const updatedArray = [...array];
+    for (let i = 0; i < array.length; i++) {
+      updatedArray[i].color =
+        result[i] === "green" ? "bg-green-400" :
+          result[i] === "yellow" ? "bg-yellow-300" :
+            "bg-gray-400"
+    }
+    return updatedArray;
+  }
+
+  console.log(board);
 
   return (
     <div className='w-fit mx-auto mt-10'>
@@ -88,7 +107,7 @@ function GameBoard() {
             {row.map((col, colIndex) =>
               <div
                 key={colIndex}
-                className='size-15 text-4xl font-semibold text-center pt-1.5 border-1'
+                className={`size-15 text-4xl font-semibold text-center pt-2 border-1 ${col?.color ?? ""}`}
               >
                 {col?.letter || ""}
               </div>)

@@ -51,7 +51,7 @@ app.post("/words/check", async (req, res) => {
     count[guess[i]]--;
   }
 
-  return res.send({ result });
+  return res.send({ colors: result });
 })
 
 app.listen(3000, () => {
