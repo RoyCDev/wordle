@@ -109,26 +109,34 @@ function GameBoard() {
     return updatedArray;
   }
 
-  return (
-    <div className='w-fit mx-auto mt-10'>
-      <div className='space-y-2'>
-        {board.map((row, rowIndex) => {
-          return <div key={rowIndex} className='flex justify-center space-x-2'>
-            {row.map((col, colIndex) =>
-              <div
-                key={colIndex}
-                className={`size-15 text-4xl font-semibold text-center pt-2 ${col?.color ? col.color + " text-white" : "border border-gray-300"}`}>
-                {col?.letter || ""}
-              </div>)
-            }
-          </div>
-        })}
-      </div>
+  const handleKeyPress = ({ key }) => {
+    if (key.length === 1 && key.match(/[a-z]/i)) handleAdd(key.toUpperCase())
+    else if (event.key === "Enter") handleSubmit();
+    else if (event.key === "Backspace") handleDelete();
+  }
 
-      {!isGameOver &&
-        <KeyBoard handleAdd={handleAdd} handleDelete={handleDelete} handleSubmit={handleSubmit} />
-      }
-    </div>
+  return (
+    <main tabIndex={0} onKeyDown={(event => handleKeyPress(event))}>
+      <div className='w-fit mx-auto mt-10'>
+        <div className='space-y-2'>
+          {board.map((row, rowIndex) => {
+            return <div key={rowIndex} className='flex justify-center space-x-2'>
+              {row.map((col, colIndex) =>
+                <div
+                  key={colIndex}
+                  className={`size-15 text-4xl font-semibold text-center pt-2 ${col?.color ? col.color + " text-white" : "border border-gray-300"}`}>
+                  {col?.letter || ""}
+                </div>)
+              }
+            </div>
+          })}
+        </div>
+
+        {!isGameOver &&
+          <KeyBoard handleAdd={handleAdd} handleDelete={handleDelete} handleSubmit={handleSubmit} />
+        }
+      </div>
+    </main>
   )
 }
 
