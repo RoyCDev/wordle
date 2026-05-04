@@ -4,7 +4,7 @@ function KeyBoard({ handleAdd, handleDelete, handleSubmit }) {
   const KEYS = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "ENTER", "Z", "X", "C", "V", "B", "N", "M", "DELETE"];
 
   return (
-    <div className='flex flex-wrap max-w-108 justify-center gap-2 mt-10'>
+    <section className='flex flex-wrap max-w-108 justify-center gap-2 mt-10'>
       {KEYS.map(key =>
         <button
           key={key}
@@ -17,7 +17,7 @@ function KeyBoard({ handleAdd, handleDelete, handleSubmit }) {
           {key}
         </button>)
       }
-    </div>
+    </section>
   )
 }
 

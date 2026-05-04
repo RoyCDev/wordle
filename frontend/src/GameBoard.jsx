@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react'
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react'
 import KeyBoard from './KeyBoard';
 import Cookies from "js-cookie"
 import { toast } from 'react-toastify';
@@ -66,11 +65,14 @@ function GameBoard() {
 
     if (guess.length === WORD_LENGTH) {
       const result = await checkGuess(guess);
-      if (result) {
+      if (result?.colors) {
         setBoard(prev => prev.map((row, rowIndex) => {
           return rowIndex === guessesCount ? updateRowTilesColor(row, result.colors) : row
         }))
         setGuessesCount(prev => prev + 1);
+      }
+      else if (result?.error) {
+        toast.error(result.error)
       }
     }
     else {
@@ -87,8 +89,8 @@ function GameBoard() {
         credentials: "include"
       })
 
-      if (!response.ok) {
-        toast.error(response.status + response.statusText);
+      if (!response.ok && response.status != 400) {
+        toast.error(response.statusText);
         return;
       }
       return await response.json();
@@ -116,9 +118,9 @@ function GameBoard() {
   }
 
   return (
-    <main tabIndex={0} onKeyDown={(event => handleKeyPress(event))}>
-      <div className='w-fit mx-auto mt-10'>
-        <div className='space-y-2'>
+    <div tabIndex={0} onKeyDown={(event => handleKeyPress(event))}>
+      <main className='w-fit mx-auto mt-10'>
+        <section className='space-y-2'>
           {board.map((row, rowIndex) => {
             return <div key={rowIndex} className='flex justify-center space-x-2'>
               {row.map((col, colIndex) =>
@@ -130,13 +132,13 @@ function GameBoard() {
               }
             </div>
           })}
-        </div>
+        </section>
 
         {!isGameOver &&
           <KeyBoard handleAdd={handleAdd} handleDelete={handleDelete} handleSubmit={handleSubmit} />
         }
-      </div>
-    </main>
+      </main>
+    </div>
   )
 }
 

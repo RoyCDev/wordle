@@ -10,26 +10,34 @@ app.use(cors({
   credentials: true
 }))
 
-app.get("/words/random", async (req, res) => {
+const fetchWords = async () => {
   try {
     const response = await fetch("https://darkermango.github.io/5-Letter-words/words.json");
     if (!response.ok) {
       return res.sendStatus(response.status);
     }
     const result = await response.json();
-
-    const rand = Math.floor(Math.random() * result.words.length);
-    res.cookie("word", result.words[rand]);
-    return res.status(200).send({ word: result.words[rand] });
+    return result.words
   }
   catch (error) {
     return res.status(500).send({ error });
   }
+}
+
+app.get("/words/random", async (req, res) => {
+  const words = await fetchWords();
+  const rand = Math.floor(Math.random() * words.length);
+  res.cookie("word", words[rand]);
+  return res.status(200).send({ word: words[rand] });
 })
 
 app.post("/words/check", async (req, res) => {
   const target = req.cookies.word;
+  if (!target) { return res.status(400).send({ error: "You don't have a target word!" }); }
+
   const { guess } = req.body;
+  const words = await fetchWords();
+  if (!words.includes(guess)) { return res.status(400).send({ error: "Not in word list" }) };
 
   const count = {};
   for (const letter of target) {
