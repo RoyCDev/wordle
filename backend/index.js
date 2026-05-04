@@ -29,6 +29,13 @@ const fetchWords = async () => {
   }
 }
 
+app.get("/test", (req, res) => {
+  res.send({
+    mode: process.env.NODE_ENV,
+    frontend: process.env.FRONTEND_BASE
+  })
+})
+
 app.get("/words/random", async (req, res) => {
   const words = await fetchWords();
   const rand = Math.floor(Math.random() * words.length);
