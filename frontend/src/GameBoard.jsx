@@ -6,6 +6,9 @@ import { toast } from 'react-toastify';
 function GameBoard() {
   const MAX_GUESSES = 6;
   const WORD_LENGTH = 5;
+  const BG_GREEN = "bg-green-600";
+  const BG_YELLOW = "bg-yellow-500";
+  const BG_GRAY = "bg-gray-500";
 
   const defaultBoard = []
   for (let i = 0; i < MAX_GUESSES; i++) {
@@ -16,9 +19,21 @@ function GameBoard() {
   const [guessesCount, setGuessesCount] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
 
+  const keyColors = {};
+  for (let i = 0; i < guessesCount; i++) {
+    for (let slot of board[i]) {
+      const letter = slot.letter;
+      // hierachy: green > yellow > gray. For each key, use the highest rated color we've seen
+      if (keyColors[letter] === BG_YELLOW && slot.color === BG_GRAY || keyColors[letter] === BG_GREEN) {
+        continue;
+      }
+      keyColors[letter] = slot.color
+    }
+  }
+
   useEffect(() => {
     if (guessesCount !== 0) { // check only if we've made a guess
-      const isLastGuessCorrect = board[guessesCount - 1].every(slot => slot?.color === "bg-green-600");
+      const isLastGuessCorrect = board[guessesCount - 1].every(slot => slot?.color === BG_GREEN);
       if (guessesCount === MAX_GUESSES || isLastGuessCorrect) {
         setIsGameOver(true);
         toast.info(isLastGuessCorrect ? "You guessed it!" : "The word is " + Cookies.get("word"));
@@ -104,9 +119,9 @@ function GameBoard() {
     const updatedArray = [...array];
     for (let i = 0; i < array.length; i++) {
       updatedArray[i].color =
-        result[i] === "green" ? "bg-green-600" :
-          result[i] === "yellow" ? "bg-yellow-500" :
-            "bg-gray-500"
+        result[i] === "green" ? BG_GREEN :
+          result[i] === "yellow" ? BG_YELLOW :
+            BG_GRAY
     }
     return updatedArray;
   }
@@ -118,8 +133,8 @@ function GameBoard() {
   }
 
   return (
-    <div tabIndex={0} onKeyDown={(event => handleKeyPress(event))}>
-      <main className='w-fit mx-auto mt-10'>
+    <div tabIndex={0} onKeyDown={(event => handleKeyPress(event))} className='pt-10'>
+      <main className='w-fit mx-auto'>
         <section className='space-y-2'>
           {board.map((row, rowIndex) => {
             return <div key={rowIndex} className='flex justify-center space-x-2'>
@@ -135,7 +150,12 @@ function GameBoard() {
         </section>
 
         {!isGameOver &&
-          <KeyBoard handleAdd={handleAdd} handleDelete={handleDelete} handleSubmit={handleSubmit} />
+          <KeyBoard
+            handleAdd={handleAdd}
+            handleDelete={handleDelete}
+            handleSubmit={handleSubmit}
+            keyColors={keyColors}
+          />
         }
       </main>
     </div>
