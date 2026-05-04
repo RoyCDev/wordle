@@ -45,18 +45,17 @@ app.post("/words/check", async (req, res) => {
   }
 
   const result = new Array(5);
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 5; i++) { //check if the letters are in the correct position first
     if (guess[i] === target[i]) {
-      result[i] = "green"
+      result[i] = "green";
+      count[guess[i]]--;
     }
-    else if (count[guess[i]] > 0) {
-      result[i] = "yellow"
+  }
+  for (let i = 0; i < 5; i++) { // then check if the leftover letters are still in the target word
+    if (!result[i]) {
+      result[i] = count[guess[i]] > 0 ? "yellow" : "gray";
+      count[guess[i]]--;
     }
-    else {
-      result[i] = "gray"
-    }
-
-    count[guess[i]]--;
   }
 
   return res.send({ colors: result });
