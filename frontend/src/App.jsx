@@ -6,7 +6,7 @@ function App() {
   useEffect(() => {
     const init = async () => {
       try {
-        await fetch("http://localhost:3000/words/random", {
+        await fetch(`${import.meta.env.VITE_API_BASE}/words/random`, {
           credentials: "include"
         });
       }

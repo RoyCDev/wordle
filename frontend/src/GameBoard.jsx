@@ -97,7 +97,7 @@ function GameBoard() {
 
   const checkGuess = async (guess) => {
     try {
-      const response = await fetch("http://localhost:3000/words/check", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/words/check`, {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ guess: guess.toLowerCase() }),
